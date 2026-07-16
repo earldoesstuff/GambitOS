@@ -1,13 +1,20 @@
 #pragma once
-#include "api.h"
+#include "main.h"
 
-// 1. Declare the update function so main.cpp can run it in its loop
-void updateLift();
+namespace lift {
+    void auton_cascade (double target_pos);
+    void init ();
+    void control ();
 
-// 2. Share the global tracking variable 
-extern bool isQuickDropping;
+    extern pros::MotorGroup cascade_motors;
+    extern pros::MotorGroup chainbar_motors;
+    extern pros::adi::Pneumatics clamp_piston;
+    extern pros::adi::DigitalIn cascade_limit;
 
-// 3. Share the motor and sensor objects (useful if you need them in autonomous.cpp)
-extern pros::Motor cascadeLeft;
-extern pros::Motor cascadeRight;
-extern pros::adi::DigitalIn limitSwitch;
+    typedef enum cascade_mode{
+        CASCADE_AUTO = 0,
+        CASCADE_MANUAL = 1
+    } cascade_mode_e_t;
+
+    extern cascade_mode_e_t cascade_mode;
+}

@@ -35,6 +35,10 @@
 #define PROS_USE_LITERALS
 
 #include "api.h"
+#include "lemlib/api.hpp"
+#include "subsystems/drive.hpp"
+#include "subsystems/lift.hpp"
+#include "subsystems/pneumatics.hpp"
 
 /**
  * You should add more #includes here
