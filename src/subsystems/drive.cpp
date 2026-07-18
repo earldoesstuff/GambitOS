@@ -66,7 +66,7 @@ namespace drive {
     void control() {
         chassis.setBrakeMode(MOTOR_BRAKE_COAST);
         while (true) {
-            chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), true, 0.7);
+            chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), true, 0.7);
         }
     }
 }

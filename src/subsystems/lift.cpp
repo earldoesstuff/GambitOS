@@ -34,8 +34,7 @@ namespace lift {
             float current_pos = cascade_motors.get_position(); //creates a variable that gets the motor position
             error = target_pos - current_pos; //determines error
             float power = cascade_pid.update(error); //gets motor power from pid algorithm
-            cascade_motors.move(power); //moves motor at required power
-            pros::delay(10); //runs as a loop every 10 ms
+            cascade_motors.move(power); //moves motor at required power //runs as a loop every 10 ms
         } while (std::fabs(error) > cascade_error);
         cascade_mode = CASCADE_MANUAL;
     }
@@ -58,7 +57,6 @@ namespace lift {
                 was_moving = false;
             }
         }
-        pros::delay(10);
     }
 
 /*---------------CHAINBAR PID--------------------*/
@@ -106,7 +104,7 @@ namespace lift {
         chainbar_motors.set_encoder_units_all(pros::E_MOTOR_ENCODER_DEGREES);
     }
 /*--------------MACROS-----------------*/
-    void quick_drop_macro() {
+    /*void quick_drop_macro() {
         cascade_mode = CASCADE_AUTO;
         lift::auton_cascade(10);
         lift::auton_chainbar(0);
@@ -124,14 +122,18 @@ namespace lift {
         clamp_piston.extend();
         pros::delay(250);
         auton_cascade(10);
-    }
+    }*/
 /*------------------LIFT AND CHAINBAR CONTROL---------------------*/
     void control() {
         while (true) {
-            if (cascade_mode_flag) {
+            /*if (cascade_mode_flag) {
                 cascade_mode = CASCADE_AUTO;
                 cascade_mode_flag = false;
-            }
+            }*/
+
+           if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
+            printf("%f\n", cascade_motors.get_position());
+           }
             switch (cascade_mode) { //driver control only
                 case CASCADE_MANUAL:
                     manual_cascade();
@@ -141,6 +143,7 @@ namespace lift {
                     double target_pos = closest_height(PIN_HEIGHTS, curr_height);
                     //calculate from lookup table here
                     auton_cascade(target_pos);
+                    printf("auto\n");
                     break;}
                 default:
                     printf("dumbass\n");
@@ -150,6 +153,7 @@ namespace lift {
             if (cascade_limit.get_value()) {
                 cascade_motors.set_zero_position(0);
             }
+        pros::delay(10);
         }
     }
 
