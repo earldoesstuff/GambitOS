@@ -39,7 +39,10 @@
 #include "subsystems/drive.hpp"
 #include "subsystems/lift.hpp"
 #include "subsystems/pneumatics.hpp"
-
+#include <iostream>
+#include <vector>
+#include <algorithm> 
+#include <cstdlib>
 /**
  * You should add more #includes here
  */

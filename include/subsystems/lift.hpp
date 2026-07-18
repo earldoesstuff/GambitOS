@@ -3,6 +3,8 @@
 
 namespace lift {
     void auton_cascade (double target_pos);
+    void auton_chainbar (double target_pos);
+    double closest_height(const std::vector<double>&heights, double curr_height);
     void init ();
     void control ();
 
