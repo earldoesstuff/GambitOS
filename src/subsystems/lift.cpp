@@ -24,6 +24,7 @@ namespace lift {
 
 /*-----------------CASCADE PID-----------------------*/
     void auton_cascade(double target_pos) {
+        //make into a while loop so it runs until 
         float current_pos = cascade_motors.get_position(); //creates a variable that gets the motor position
         float error = target_pos - current_pos; //determines error
         float power = cascade_pid.update(error); //gets motor power from pid algorithm
@@ -110,6 +111,13 @@ namespace lift {
 /*------------------LIFT AND CHAINBAR CONTROL---------------------*/
     void control() {
         while (true) {
+            if ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) || (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))) {
+                cascade_mode = CASCADE_MANUAL;
+            }
+            else {
+                cascade_mode = CASCADE_AUTO;
+            }
+           
             switch (cascade_mode) { //driver control only
                 case 0:
                     manual_cascade();
@@ -128,8 +136,6 @@ namespace lift {
             if (cascade_limit.get_value()) {
                 cascade_motors.set_zero_position(0);
             }
-
-            
         }
     }
 
