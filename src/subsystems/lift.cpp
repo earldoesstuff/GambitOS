@@ -17,43 +17,60 @@ namespace lift {
     pros::adi::DigitalIn  cascade_limit('b');  //cascade limit switch declaration
 
     cascade_mode_e_t cascade_mode = CASCADE_MANUAL; //creates enum for manual/autonomous cascade pid
+    bool cascade_mode_flag = false;
+    bool was_moving = false;
     const std::vector <double> PIN_HEIGHTS = {10.0, 20.0, 30.0};
+    const double cascade_error = 0.25;
+    const double chainbar_error = 0.25;
 
     lemlib::PID cascade_pid(5, 0.01, 20, 5, false); //creates lemlib constructor for cascade lift
     lemlib::PID chainbar_pid(5 , 0.01, 20, 5, false); //creates lemlib constructor for chainbar
 
 /*-----------------CASCADE PID-----------------------*/
     void auton_cascade(double target_pos) {
-        //make into a while loop so it runs until 
-        float current_pos = cascade_motors.get_position(); //creates a variable that gets the motor position
-        float error = target_pos - current_pos; //determines error
-        float power = cascade_pid.update(error); //gets motor power from pid algorithm
-        cascade_motors.move(power); //moves motor at required power
-        pros::delay(20); //runs as a loop every 10 ms
+        float error;
+        do {
+            //make into a while loop so it runs until 
+            float current_pos = cascade_motors.get_position(); //creates a variable that gets the motor position
+            error = target_pos - current_pos; //determines error
+            float power = cascade_pid.update(error); //gets motor power from pid algorithm
+            cascade_motors.move(power); //moves motor at required power
+            pros::delay(10); //runs as a loop every 10 ms
+        } while (std::fabs(error) > cascade_error);
+        cascade_mode = CASCADE_MANUAL;
     }
 
 /*------------MANUAL CASCADE---------------*/
     void manual_cascade() {
         if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) {
             cascade_motors.move_voltage(12000);
+            was_moving = true;
         }
         else if ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)) && (cascade_limit.get_value() == 0)) {
             cascade_motors.move_voltage(-12000);
+            was_moving = true;
         }
         else {
             cascade_motors.move_voltage(0);
             cascade_motors.brake();
+            if (was_moving) {
+                cascade_mode_flag = true;
+                was_moving = false;
+            }
         }
         pros::delay(10);
     }
 
 /*---------------CHAINBAR PID--------------------*/
     void auton_chainbar(double target_pos) {
-        float current_pos = chainbar_motors.get_position();
-        float error = target_pos - current_pos;
-        float power = cascade_pid.update(error);
-        cascade_motors.move(power);
-        pros::delay(10);
+        float error;
+        do {
+            float current_pos = chainbar_motors.get_position();
+            error = target_pos - current_pos;
+            float power = cascade_pid.update(error);
+            cascade_motors.move(power);
+            pros::delay(10);
+        } while (std::fabs(error) > chainbar_error);
     }
 
 /*-------------LOOKUP TABLE--------------*/
@@ -111,18 +128,15 @@ namespace lift {
 /*------------------LIFT AND CHAINBAR CONTROL---------------------*/
     void control() {
         while (true) {
-            if ((controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)) || (controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2))) {
-                cascade_mode = CASCADE_MANUAL;
-            }
-            else {
+            if (cascade_mode_flag) {
                 cascade_mode = CASCADE_AUTO;
+                cascade_mode_flag = false;
             }
-           
             switch (cascade_mode) { //driver control only
-                case 0:
+                case CASCADE_MANUAL:
                     manual_cascade();
                     break;
-                case 1: {
+                case CASCADE_AUTO: {
                     double curr_height = cascade_motors.get_position(0);
                     double target_pos = closest_height(PIN_HEIGHTS, curr_height);
                     //calculate from lookup table here
