@@ -16,7 +16,7 @@ namespace drive {
 
     lemlib::Drivetrain drivetrain(&left_motor_group, &right_motor_group, 10.625, lemlib::Omniwheel::NEW_325, 360, 2);
     
-    pros::Imu imu(1);
+    pros::Imu imu(12);
 
     lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, &imu);
 
@@ -67,6 +67,7 @@ namespace drive {
         chassis.setBrakeMode(MOTOR_BRAKE_COAST);
         while (true) {
             chassis.arcade(controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X), controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y), true, 0.7);
+        pros::delay(10);
         }
     }
 }
