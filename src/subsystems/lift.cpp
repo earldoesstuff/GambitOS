@@ -63,13 +63,16 @@ namespace lift {
             cascade_motors.move_voltage(-12000);
 
         }
-        else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+        /*else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
             printf("started\n");
             double curr_height = cascade_motors.get_position();
             double target_pos = closest_height(PIN_HEIGHTS, curr_height);
             auton_cascade(target_pos);
             printf("running\n");
-        }
+            auton_chainbar(750);
+            chainbar_motors.move_voltage(0);
+            chainbar_motors.brake();
+        }*/
         else {
             cascade_motors.move_voltage(0);
             cascade_motors.brake();
@@ -118,7 +121,6 @@ namespace lift {
             }
     }
 
-
     void cascade_reset() {
         do {
          cascade_motors.move_voltage(-12000);   
@@ -143,7 +145,7 @@ namespace lift {
 
             manual_cascade();
 
-            
+
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
             printf("%f\n", cascade_motors.get_position());
             printf("%f\n", chainbar_motors.get_position());
@@ -157,16 +159,15 @@ namespace lift {
                 chainbar_motors.brake();
             }
 
+            //second cup 1.82/930
+            //third cup 2.3/925
+            //fourth cup 3.4/890
 
-
-            if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
-
-            }
             /*---------FIRST FRONT MACRO---------*/
-            if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) { //first front
+            /*if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) { //first front
                 auton_chainbar(120);
                 auton_cascade(1.6);
-            }
+            }*/
             /*--------QUICKDROP MACRO--------*/
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { //quick drop macro
                 clamp_piston.retract();
@@ -175,14 +176,13 @@ namespace lift {
                 auton_cascade(0.25);
             }
 
+            if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
+                
+            }
+
             /*--------PICKUP MACRO----------*/
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) { //pickup macro
-                cascade_reset();
-                printf("1\n");
-                clamp_piston.extend();
-                printf("2\n");
-                auton_cascade(0.35);
-                printf("done\n");
+                clamp_piston.toggle();
             }
             /*else if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) {
                 clamp_piston.retract();
