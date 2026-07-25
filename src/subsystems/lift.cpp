@@ -35,8 +35,9 @@ namespace lift {
 //between 6.5 and 6.75 - 0.5 and 
 
 /*-----------------CASCADE PID-----------------------*/
-    void auton_cascade(double target_pos) {
+    void auton_cascade(double target_pos, double timeout) {
         float error;
+        uint32_t time = pros::millis();
         /*do {
             float current_pos = cascade_motors.get_position();
             error = target_pos - current_pos;
@@ -50,7 +51,7 @@ namespace lift {
             float power = cascade_pid.update(error); //gets motor power from pid algorithm
             cascade_motors.move(power);
             pros::delay(10); //moves motor at required power //runs as a loop every 10 ms
-        } while (std::fabs(error) > cascade_error);
+        } while ((std::fabs(error) > cascade_error) || (pros::millis() - time >= timeout));
     }
 
 /*------------MANUAL CASCADE---------------*/
@@ -121,6 +122,13 @@ namespace lift {
             }
     }
 
+
+    /*void scoring_macro() {
+        uint32_t time = pros::millis();
+        while (pros::millis)
+    }
+*/
+
     void cascade_reset() {
         do {
          cascade_motors.move_voltage(-12000);   
@@ -171,9 +179,9 @@ namespace lift {
             /*--------QUICKDROP MACRO--------*/
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { //quick drop macro
                 clamp_piston.retract();
-                auton_cascade((cascade_motors.get_position() + 0.3));
+                auton_cascade((cascade_motors.get_position() + 0.3), 500);
                 auton_chainbar(0);
-                auton_cascade(0.25);
+                auton_cascade(0.25, 500); //test timeouts
             }
 
             if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_B)) {
