@@ -1,7 +1,7 @@
 #include "main.h"
 #include "subsystems/drive.hpp"
 
-#define LEFT_MOTORS {13, -14, 15}
+#define LEFT_MOTORS {12, -13, 14}
 #define RIGHT_MOTORS {17, -19, 20}
 
 namespace drive {
@@ -16,7 +16,7 @@ namespace drive {
 
     lemlib::Drivetrain drivetrain(&left_motor_group, &right_motor_group, 10.625, lemlib::Omniwheel::NEW_325, 360, 2);
     
-    pros::Imu imu(12);
+    pros::Imu imu(16);
 
     lemlib::OdomSensors sensors(nullptr, nullptr, nullptr, nullptr, &imu);
 
