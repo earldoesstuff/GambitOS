@@ -30,6 +30,7 @@ namespace lift {
     const double cascade_error = 0.075;
     const double chainbar_error = 4.0;
     const double quickdrop_offset = 0.3;
+    double speed_multiplier = 0.5;
 
     //between 37695 and 3700 - 4075/4076
     lemlib::PID cascade_pid(3700, 0.0, 4075, 5, false); //creates lemlib constructor for cascade lift
@@ -68,6 +69,26 @@ namespace lift {
         }
     }
 
+void manual_chainbar() {
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R1)) {
+        chainbar_motors.move_voltage(12000 * speed_multiplier);
+    }
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_R2)) {
+        chainbar_motors.move_voltage(-12000 * speed_multiplier);
+    }
+    else {
+        chainbar_motors.move_voltage(0);
+        chainbar_motors.brake();
+    }
+
+    if (controller.get_digital(pros::E_CONTROLLER_DIGITAL_LEFT)) {
+        speed_multiplier = 0.5;
+    }
+    else {
+        speed_multiplier = 1;
+    }
+}
+
 /*---------------CHAINBAR PID--------------------*/
     void auton_chainbar(double target_pos, double timeout, double max_speed = 127.0) {
         float error;
@@ -83,7 +104,7 @@ namespace lift {
         chainbar_motors.brake();
     }
 
-/*-------------CLOSEST HEIGHT LOOKUP TABLE--------------*/
+/*-------------CLOSEST HEIGHT LOOKUP TABLE--------------
 
     double closest_height(const std::vector<double>&heights, double curr_height) {
         auto next_state = std::lower_bound(heights.begin(), heights.end(), curr_height);
@@ -104,7 +125,7 @@ namespace lift {
                 return higher;
             }
     }
-
+*/
 
 /*--------------INITIALIZE-----------------*/
     void init() {
@@ -122,6 +143,8 @@ namespace lift {
         while (true) {
 
             manual_cascade();
+            manual_chainbar();
+
 
 
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)) {
@@ -132,13 +155,13 @@ namespace lift {
             //second cup 1.82/930
             //third cup 2.3/925
             //fourth cup 3.4/890
-
-            /*---------FIRST FRONT MACRO---------*/
+/*
+            ---------FIRST FRONT MACRO---------
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)) { //first front
                 auton_chainbar(120, 500);
                 auton_cascade(1.6, 250);
             }
-            /*--------QUICKDROP MACRO--------*/
+            --------QUICKDROP MACRO--------
             if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_Y)) { //quick drop macro
                 clamp_piston.retract();
                 auton_cascade((cascade_motors.get_position() + quickdrop_offset), 500);
@@ -152,9 +175,9 @@ namespace lift {
                     auton_chainbar(930, 1500);
                 }
             }
-
+*/
             /*--------PICKUP MACRO----------*/
-            if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_R1)) { //pickup macro
+            if (controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)) { //pickup macro
                 clamp_piston.toggle();
             }
 
