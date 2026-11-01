@@ -36,9 +36,11 @@
 
 #include "api.h"
 #include "lemlib/api.hpp"
+#include "subsystems/wrist.hpp"
 #include "subsystems/drive.hpp"
 #include "subsystems/lift.hpp"
 #include "subsystems/pneumatics.hpp"
+#include "subsystems/intake.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm> 
