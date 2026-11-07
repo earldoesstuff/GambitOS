@@ -41,6 +41,7 @@
 #include "subsystems/lift.hpp"
 #include "subsystems/pneumatics.hpp"
 #include "subsystems/intake.hpp"
+#include "autons.hpp"
 #include <iostream>
 #include <vector>
 #include <algorithm> 

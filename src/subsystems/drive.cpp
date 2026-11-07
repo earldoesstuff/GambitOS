@@ -22,14 +22,14 @@ namespace drive {
 
     // lateral PID controller
     lemlib::ControllerSettings lateral_controller(
-                                                11.5, // proportional gain (kP)
+                                                9.5, // proportional gain (kP) //temp change from 11.5
                                                 0, // integral gain (kI)
                                                 29, // derivative gain (kD)
                                                 3, // anti windup
                                                 1, // small error range, in inches
                                                 100, // small error range timeout, in milliseconds
                                                 3, // large error range, in inches
-                                                500, // large error range timeout, in milliseconds
+                                                0, // large error range timeout, in milliseconds
                                                 0 // maximum acceleration (slew)
     );
 

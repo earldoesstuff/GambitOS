@@ -5,7 +5,7 @@ namespace lift {
     void move (double target_pos, double timeout);
     void init ();
     void control ();
-    
-    extern pros::MotorGroup cascade_motors;
+    void startup();
+    extern pros::MotorGroup motors;
 }
 extern pros::Controller master;

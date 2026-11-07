@@ -33,7 +33,7 @@ namespace wrist {
             intake_motor.move_voltage(12000);
         }
         else if (claw_intaking == true) {
-            intake_motor.move_voltage(-3000);
+            intake_motor.move_voltage(-4000);
         }
         else {
             intake_motor.move_voltage(0);
@@ -56,7 +56,6 @@ namespace wrist {
             }
             else {
                 wrist::angle(-360,500);
-                pros::delay(250);
                 wrist::angle(-300, 500);
             }
         }

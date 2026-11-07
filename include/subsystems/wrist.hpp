@@ -9,6 +9,6 @@ namespace wrist {
     void loading_position();
 
     extern pros::Motor angle_motor;
-    extern pros::Motor intaking_wrist_motor;
+    extern pros::Motor intake_motor;
 
 }
